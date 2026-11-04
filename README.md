@@ -19,6 +19,7 @@ A [kanata](https://github.com/jtroo/kanata) configuration ([`kanata.kbd`](kanata
 - [Chords (combos)](#chords-combos)
 - [Timing and anti-misfire settings](#timing-and-anti-misfire-settings)
 - [Adapting the layout](#adapting-the-layout)
+- [Regenerating the diagrams](#regenerating-the-diagrams)
 - [References](#references)
 
 ---
@@ -542,6 +543,32 @@ The configuration is meant to be adapted to your own needs. Some suggestions:
 - **Use the unused mouse speed alias.** The `fst` alias (`movemouse-speed 300`) is defined but not mapped. Place it on a free key in the mouse layer to get a "fast mouse" modifier.
 
 After each change, run kanata with `--check`, or press nav + `E` four times to reload.
+
+---
+
+## Regenerating the diagrams
+
+The images in [`images/`](images) and the text version under each layer diagram are generated from `kanata.kbd`, so you don't have to redraw them by hand. Two equivalent scripts are included:
+
+- [`tools/make-images.sh`](tools/make-images.sh) — bash and POSIX `awk`, for Linux and macOS.
+- [`tools/make-images.ps1`](tools/make-images.ps1) — PowerShell, for Windows (or `pwsh` anywhere).
+
+Run either one from anywhere; paths are resolved relative to the script:
+
+```bash
+bash tools/make-images.sh
+pwsh -File tools/make-images.ps1
+```
+
+Both read `defsrc`, `deflayer`, `defalias`, `deftemplate` and `defchordsv2` from `kanata.kbd`, and produce byte-identical output:
+
+- `images/layer-base.svg`, `layer-nav.svg`, `layer-num.svg`, `layer-mouse.svg` — one per layer, light and dark theme
+- `images/chords.svg` and `images/legend.svg`
+- the ASCII text versions in this README, between the `<!-- text:<layer> -->` and `<!-- /text:<layer> -->` markers
+
+The options match: `-c`, `-o` and `-r` (bash) / `-Config`, `-OutDir` and `-Readme` (PowerShell) select a different config, output folder or README.
+
+Anything the scripts don't recognise is drawn with its raw name and a warning, and a layer with the wrong number of keys for the physical layout is reported — which catches most copy-paste slips in a new layer. Two things are deliberately part of the scripts rather than the configuration: the physical key widths of each row, and the friendly labels for key names and actions. Extend those when you add something new.
 
 ---
 
