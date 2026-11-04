@@ -1,0 +1,291 @@
+;;  Kanata configuration for 60%/40%/30% keyboards
+;;  4 November 2026
+
+
+;;  Layer definitions
+;;  Note: duplicatoin of row 1 on row 2 is necessary for 30%/40% keyboards
+
+(deflayer base
+  esc       1    2    3    4    5    6    7    8    9    0         -    =    bspc
+  tab       q    w    e    r    t    y    u    i    o    p         [    ]    \
+  @ec       @a   @s   @d   @f   g    @h   @j   @k   @l   @;        '    ret
+  @oss      @zsc x    c    v    b    n    m    ,    .    @/sc      @oss
+       lctl lmet lalt      @ttl @mou @ttr      @tta rmet menu rctl
+)
+
+(deflayer nav
+  grv       f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  del
+  _         XX   XX   @er  ret  tab  home pgdn pgup end  bspc      prnt slck brk 
+  _         lmet lalt lctl lsft caps left down up   rght ret       ins  _
+  _         mute vold volu pp   ins  hmpg bck  esc  tab  del       @dsc
+       _    _    _         @mou XX   _         _    _    _    _
+)
+
+(deflayer num
+  _         f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  _
+  _         f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  XX
+  _         @1   @2   @3   @4   5    @6   @7   @8   @9   @0        XX   _
+  _         @[sc ]    -    =    f11  f12  grv  '    ;    @\sc      @/sc
+       _    _    _         _    _    @mou      _    _    _    _
+)
+
+(deflayer mouse
+  _         _    _    _    _    _    _    _    _    _    _         _    _    _
+  _         kp-  kp7  kp8  kp9  kp+  @mwl @mwd @mwu @mwr mmid      XX   XX   XX
+  _         @kp0 @kp4 @kp5 @kp6 kp*  @mal @mad @mau @mar mlft      @sm  _
+  _         kp.  kp1  kp2  kp3  kp/  @msl @msd @msu @msr mrgt      _
+       _    _    _         _    _    _         _    _    _    _
+)
+
+
+;;  Alias definitions
+
+(defalias
+;; Various
+  ec  (tap-hold-press $tt $ht esc lctl)  ;; esc, hold for ctl
+  er  (tap-dance $ht (esc (macro esc esc) (macro esc esc esc) lrld))  ;; esc, tap 4x for reload
+  oss (tap-dance $ht (  ;; tapdance One Shot Shift / Caps Word
+        (one-shot-press-pcancel $cancel lsft)
+        (caps-word $cancel)
+      ))
+
+;; Alpha Shift tap-hold-tap-dance for Shift / OSS / Caps Word
+  zsc (t! csc z) 
+  /sc (t! csc /)
+  [sc (t! csc [)
+  \sc (t! csc \)
+  dsc (t! csc del)
+;; Plain Alpha Shift
+;;  z   (tap-hold $tt $ht z lsft)
+;;  /   (tap-hold $tt $ht / rsft)
+;;  [   (tap-hold $tt $ht [ lsft)
+;;  \   (tap-hold $tt $ht \ rsft)
+;;  ds  (tap-hold $tt $ht del rsft)
+
+;; Layer toggles
+  ttr (tap-dance $tt (             ;; Right space tap-hold-tapdance for nav layer SpaceFn 
+        (tap-hold $tt $htq
+          spc                      ;; tap is space
+          (layer-toggle nav)       ;; hold is nav
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+        (tap-hold-release $tt $ht
+          (macro spc spc)          ;; tap tap is spaces
+          (layer-toggle num)       ;; tap hold is num
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+        (tap-hold-release $tt $ht
+          (macro spc spc spc)      ;; tap tap tap is spaces
+          (layer-toggle mouse)     ;; tap tap hold is mouse
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+      ))
+  ttl (tap-dance $tt (             ;; Left space (F13) tap-hold-tapdance for num layer SpaceFn
+        (tap-hold $tt $htq
+          spc                      ;; tap is space
+          (layer-toggle num)       ;; hold is num
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+        (tap-hold-release $tt $ht
+          (macro spc spc)          ;; tap tap is spaces
+          (layer-toggle nav)       ;; tap hold is nav
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+        (tap-hold-release $tt $ht
+          (macro spc spc spc)      ;; tap tap tap is spaces
+          (layer-toggle mouse)     ;; tap tap hold is mouse
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+      ))
+  tta (tap-dance $tt (             ;; ralt (num) tap-hold-tapdance for num layer on ralt
+        (tap-hold $tt $htq
+          ralt                     ;; tap is alt
+          (layer-toggle num)       ;; hold: num
+          (require-prior-idle 0)   ;; exempt SpaceFn from global idle gate
+        )
+        ralt                       ;; tap hold is alt
+      ))
+  mou (layer-toggle mouse)
+
+;; Home row mods
+  a   (tap-hold $tt $ht a lmet)
+  s   (tap-hold $tt $ht s lalt)
+  d   (tap-hold $tt $ht d lctl)
+  f   (tap-hold $tt $ht f lsft)
+  h   (tap-hold $tt $ht h menu)
+  j   (tap-hold $tt $ht j rsft)
+  k   (tap-hold $tt $ht k rctl)
+  l   (tap-hold $tt $ht l ralt)
+  ;   (tap-hold $tt $ht ; rmet)
+;;  ;   (tap-hold $tt $ht ret ;)  ;; ret as primary action on ; for narrow 40%
+
+  1   (tap-hold $tt $ht 1 lmet)
+  2   (tap-hold $tt $ht 2 lalt)
+  3   (tap-hold $tt $ht 3 lctl)
+  4   (tap-hold $tt $ht 4 lsft)
+  6   (tap-hold $tt $ht 6 menu)
+  7   (tap-hold $tt $ht 7 rsft)
+  8   (tap-hold $tt $ht 8 rctl)
+  9   (tap-hold $tt $ht 9 ralt)
+  0   (tap-hold $tt $ht 0 rmet)
+
+  kp0 (tap-hold $tt $ht kp0 lmet)
+  kp4 (tap-hold $tt $ht kp4 lalt)
+  kp5 (tap-hold $tt $ht kp5 lctl)
+  kp6 (tap-hold $tt $ht kp6 lsft)
+
+;; Mouse keys
+  mwl (mwheel-accel-left  $mw-initial-v $mw-maximum-v $mw-accel $mw-decel)
+  mwd (mwheel-accel-down  $mw-initial-v $mw-maximum-v $mw-accel $mw-decel)
+  mwu (mwheel-accel-up    $mw-initial-v $mw-maximum-v $mw-accel $mw-decel)
+  mwr (mwheel-accel-right $mw-initial-v $mw-maximum-v $mw-accel $mw-decel)
+
+  msl (movemouse-left  3 1)
+  msd (movemouse-down  3 1)
+  msu (movemouse-up    3 1)
+  msr (movemouse-right 3 1)
+
+  mal (movemouse-accel-left  3 1000 1 5)
+  mad (movemouse-accel-down  3 1000 1 5)
+  mau (movemouse-accel-up    3 1000 1 5)
+  mar (movemouse-accel-right 3 1000 1 5)
+
+  sm  (setmouse 32767 32767)  ;; centre of the screen (range 0-65535)
+  fst (movemouse-speed 300)  ;; currently not used
+)
+
+
+;;  Alpha Shift function definition
+
+(deftemplate csc (char)  ;; tap-hold-tap-dance for Alpha Shift: Shift / OSS / Caps Word
+  (tap-dance $ht (
+     (tap-hold $tt $ht $char (one-shot-press-pcancel $cancel lsft))
+     (tap-hold $tt $ht (macro $char $char) (caps-word $cancel))
+  ))
+)
+
+
+;;  Chord definitions
+
+;;  Q   W   E   R   T   Y   U   I   O   P
+;;    {   [   (   <       >   )   ]   } 
+;;
+;;  A   S   D   F   G   H   J   K   L   ;
+;;    !   @   #   $   %   ^   &   *   €
+;; 
+;;  Z   X   C   V   B   N   M   ,   .   /
+;;    ?   -   =           ;   `   '   \
+
+(defchordsv2
+;; Top combos: { [ ( < > ) ] }
+  (q w)  S-[          $ct  all-released  $chord-disabled  ;; {
+  (w e)  [            $ct  all-released  $chord-disabled  ;; [
+  (e r)  S-9          $ct  all-released  $chord-disabled  ;; (
+  (r t)  S-,          $ct  all-released  $chord-disabled  ;; <
+  (y u)  S-.          $ct  all-released  $chord-disabled  ;; >
+  (u i)  S-0          $ct  all-released  $chord-disabled  ;; )
+  (i o)  ]            $ct  all-released  $chord-disabled  ;; ]
+  (o p)  S-]          $ct  all-released  $chord-disabled  ;; }
+
+;; Home row combos: num symbols
+  (a s)  S-1          $ct  all-released  $chord-disabled  ;; !
+  (s d)  S-2          $ct  all-released  $chord-disabled  ;; @
+  (d f)  S-3          $ct  all-released  $chord-disabled  ;; #
+  (f g)  S-4          $ct  all-released  $chord-disabled  ;; $
+  (g h)  S-5          $ct  all-released  $chord-disabled  ;; %
+  (h j)  S-6          $ct  all-released  $chord-disabled  ;; ^
+  (j k)  S-7          $ct  all-released  $chord-disabled  ;; &
+  (k l)  S-8          $ct  all-released  $chord-disabled  ;; *
+  (l ;)  (unicode €)  $ct  all-released  $chord-disabled  ;; € (doesn't work on linux)
+
+;; Bottom combos: - = ` '
+  (z x)  S-/          $ct  all-released  $chord-disabled  ;; ?
+  (x c)  -            $ct  all-released  $chord-disabled  ;; -
+  (c v)  =            $ct  all-released  $chord-disabled  ;; =
+  (n m)  ;            $ct  all-released  $chord-disabled  ;; ;
+  (m ,)  grv          $ct  all-released  $chord-disabled  ;; `
+  (, .)  '            $ct  all-released  $chord-disabled  ;; '
+  (. /)  \            $ct  all-released  $chord-disabled  ;; \
+)
+
+
+;;  Variables
+
+(defvar
+  tt                180              ;; tap time (to repeat)
+  ht                180              ;; hold time
+  htq               100              ;; hold time quick (for SpaceFn)
+  ct                20               ;; chord combo time
+  cancel            2000             ;; cancel caps word time-out
+  chord-disabled    (nav num mouse)  ;; chords only fire on base
+
+  mw-initial-v  10    ;; default 3
+  mw-maximum-v  500   ;; default 1200
+  mw-accel      1.03  ;; default 1.15
+  mw-decel      0.95  ;; default 0.93 	
+)
+
+
+;;  Configuration
+
+(defcfg
+  ;; windows-altgr cancel-lctl-press  ;; remove the lctl press that comes as a combo with ralt
+  ;; windows-altgr add-lctl-release   ;; add an lctl release when ralt is released
+  ;; danger-enable-cmd yes            ;; needs to be enabled in binary
+  process-unmapped-keys yes
+  ;; block-unmapped-keys yes
+  delegate-to-first-layer yes
+  ;; movemouse-inherit-accel-state yes
+  ;; movemouse-smooth-diagonals yes
+  rapid-event-delay 5
+  log-layer-changes no
+  override-release-on-activation yes
+  concurrent-tap-hold yes
+  tap-hold-require-prior-idle 150     ;; tap-holds only fire if no key was pressed just before
+  chords-v2-min-idle 500              ;; chords only fire if no key was pressed just before
+)
+
+
+;;  Source definition (60%)
+
+(defsrc
+  grv       1    2    3    4    5    6    7    8    9    0         -    =    bspc
+  tab       q    w    e    r    t    y    u    i    o    p         [    ]    \
+  caps      a    s    d    f    g    h    j    k    l    ;         '    ret
+  lsft      z    x    c    v    b    n    m    ,    .    /         rsft
+       lctl lmet lalt      f13  f14  spc       ralt rmet menu rctl
+)
+
+
+#| NOTES
+
+Kanata project page: github.com/jtroo/kanata
+Main Documentation: github.com/jtroo/kanata/blob/main/docs/config.adoc
+Key Name Documentation: github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs
+
+Keys missing on 60% keyboard: 
+ - Top row: ESC, F1-F12
+ - Numpad incl. num lock
+ - Arrow block: arrow keys 
+ - Nav block: ins, del, home, end, pgup, pgdn
+ - Control keys: prnt, slck, brk
+ - Other: media keys, mouse
+
+Additional keys missing on a 40% keyboard:
+ - Num row: `1234567890-= \ or bspc 
+ - Sometimes also [];'/
+
+Additional keys missing on 30% keyboard (split):
+ - Alpha: spc, []'\ (sometimes: ; and/or /)
+ - Mods: (L/R) shift, ctrl, alt, gui, menu/app
+ - Grey keys: tab, caps, bspc, ret
+
+;;  Base template for adding layers (60%)
+(deflayer template
+  _         _    _    _    _    _    _    _    _    _    _         _    _    _
+  _         _    _    _    _    _    _    _    _    _    _         _    _    _
+  _         _    _    _    _    _    _    _    _    _    _         _    _
+  _         _    _    _    _    _    _    _    _    _    _         _
+       _    _    _         _    _    _         _    _    _    _
+)
+|#

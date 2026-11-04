@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 684 88" width="684" height="88" role="img" aria-label="Legend for the layer diagrams"><title>Legend for the layer diagrams</title><style>
+  .case { fill: #f6f8fa; stroke: #d0d7de; }
+  .k    { fill: #ffffff; stroke: #c4cbd3; }
+  .k.mod   { fill: #e7f0ff; stroke: #9dbcf2; }
+  .k.layer { fill: #fff2e2; stroke: #f0b77a; }
+  .k.held  { fill: #ffd8a8; stroke: #e8590c; stroke-width: 1.6; }
+  .k.trans { fill: #f1f3f5; stroke: #d8dde3; stroke-dasharray: 3 3; }
+  .k.off   { fill: #eceef1; stroke: #d8dde3; }
+  .t    { fill: #1f2328; font: 600 13px system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  .t.mod   { fill: #1a4fb5; }
+  .t.layer { fill: #9a4b00; }
+  .t.held  { fill: #8a3200; }
+  .t.off   { fill: #9aa3ad; font-weight: 400; }
+  .h    { font: 500 10px system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  .h.mod   { fill: #2f6fdf; }
+  .h.layer { fill: #c05f00; }
+  .cap  { fill: #57606a; font: 400 11px system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+  .bub  { fill: #6e40c9; }
+  .bt   { fill: #ffffff; font: 700 13px ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace; }
+  @media (prefers-color-scheme: dark) {
+    .case { fill: #161b22; stroke: #30363d; }
+    .k    { fill: #2d333b; stroke: #444c56; }
+    .k.mod   { fill: #1c2d4d; stroke: #3d5f9c; }
+    .k.layer { fill: #3b2a15; stroke: #8a5a24; }
+    .k.held  { fill: #5c3410; stroke: #ff922b; }
+    .k.trans { fill: #1c2128; stroke: #373e47; }
+    .k.off   { fill: #1c2128; stroke: #373e47; }
+    .t    { fill: #e6edf3; }
+    .t.mod   { fill: #9cc1ff; }
+    .t.layer { fill: #ffb366; }
+    .t.held  { fill: #ffd8a8; }
+    .t.off   { fill: #6e7681; }
+    .h.mod   { fill: #7fadff; }
+    .h.layer { fill: #ffa94d; }
+    .cap  { fill: #8b949e; }
+    .bub  { fill: #8957e5; }
+  }
+</style><rect class="case" x="0.5" y="0.5" width="683" height="87" rx="12"/><rect class="k " x="31" y="10" width="62" height="46" rx="6"/><text class="t " x="62" y="30" text-anchor="middle">A</text><text class="h mod" x="62" y="48" text-anchor="middle">Win</text><text class="cap" x="62" y="72" text-anchor="middle">Tap / hold</text><rect class="k mod" x="143" y="10" width="62" height="46" rx="6"/><text class="t mod" x="174" y="38" text-anchor="middle">Ctrl</text><text class="cap" x="174" y="72" text-anchor="middle">Modifier</text><rect class="k layer" x="255" y="10" width="62" height="46" rx="6"/><text class="t layer" x="286" y="30" text-anchor="middle">Space</text><text class="h layer" x="286" y="48" text-anchor="middle">Nav</text><text class="cap" x="286" y="72" text-anchor="middle">Layer key</text><rect class="k held" x="367" y="10" width="62" height="46" rx="6"/><text class="t held" x="398" y="38" text-anchor="middle">held</text><text class="cap" x="398" y="72" text-anchor="middle">Held thumb key</text><rect class="k trans" x="479" y="10" width="62" height="46" rx="6"/><text class="cap" x="510" y="72" text-anchor="middle">Same as base</text><rect class="k off" x="591" y="10" width="62" height="46" rx="6"/><text class="t off" x="622" y="38" text-anchor="middle">×</text><text class="cap" x="622" y="72" text-anchor="middle">Disabled</text></svg>
