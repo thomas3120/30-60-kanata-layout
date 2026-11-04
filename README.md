@@ -21,6 +21,7 @@ A [kanata](https://github.com/jtroo/kanata) configuration ([`kanata.kbd`](kanata
 - [Adapting the layout](#adapting-the-layout)
 - [Regenerating the diagrams](#regenerating-the-diagrams)
 - [References](#references)
+- [License](#license)
 
 ---
 
@@ -579,3 +580,11 @@ Anything the scripts don't recognise is drawn with its raw name and a warning, a
 - [kanata configuration guide](https://github.com/jtroo/kanata/blob/main/docs/config.adoc)
 - [kanata key names](https://github.com/jtroo/kanata/blob/main/parser/src/keys/mod.rs)
 - [kanata-tray](https://github.com/rszyma/kanata-tray)
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 thomas3120
+
+You are free to use, copy, modify and share this configuration, including commercially, provided the copyright notice and permission notice are kept. It is provided as is, without warranty of any kind — see [`LICENSE`](LICENSE) for the full text.
