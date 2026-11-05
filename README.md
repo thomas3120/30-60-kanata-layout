@@ -19,7 +19,6 @@ A [kanata](https://github.com/jtroo/kanata) configuration ([`kanata.kbd`](kanata
 - [Chords (combos)](#chords-combos)
 - [Timing and anti-misfire settings](#timing-and-anti-misfire-settings)
 - [Adapting the layout](#adapting-the-layout)
-- [Regenerating the diagrams](#regenerating-the-diagrams)
 - [References](#references)
 - [License](#license)
 
@@ -43,7 +42,7 @@ Once your muscle memory is built for one keyboard, it works on all of them.
 
 kanata is a software keyboard remapper. It runs in the background, intercepts key presses from *any* connected keyboard and replaces them according to the configuration file. No keyboard firmware changes are needed.
 
-- The `defsrc` block describes a **60% ANSI layout** plus two extra thumb keys, `F13` and `F14` (see [Split space bars](#split-space-bars)).
+- The `defsrc` block describes a **60% ANSI layout** plus one extra thumb key, `F13` (see [Split space bars](#split-space-bars)).
 - `process-unmapped-keys yes` makes kanata handle keys outside the 60% area too, but without remapping them. On a full-size keyboard, the arrows, F-keys, numpad and navigation block keep working as usual.
 - `delegate-to-first-layer yes` makes every transparent key (`_`) on a layer fall back to the **base layer**. For example, the special Shift keys work the same on every layer.
 
@@ -213,9 +212,9 @@ Other abbreviations used in both versions:
 | OSS   | Z     | X     | C     | V     | B     | N     | M     | ,     | .     | /     | OSS   |
 |       | Shift |       |       |       |       |       |       |       |       | Shift |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| Ctrl  | Win   | Alt   | Space |       | Space | RAlt  | Win   | Menu  | Ctrl  |
-|       |       |       | Num   | Mouse | Nav   | Num   |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Ctrl  | Win   | Alt   | Space | Space | RAlt  | Win   | Menu  | Ctrl  |
+|       |       |       | Num   | Nav   | Num   |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+
 ```
 <!-- /text:base -->
 
@@ -279,7 +278,13 @@ The same behaviour is on `[` and `\` in the num layer and `Del` in the nav layer
 
 ## Thumb keys and layer switching
 
-The layers are opened with the thumb keys: the left space key (`F13`), the middle thumb key (`F14`), the normal space bar and Right Alt (see the bottom row of the [base layer](#the-base-layer) diagram). Each space key does several things depending on how you tap or hold it:
+The layers are opened with the thumb keys: the left space key (`F13`), the normal space bar and Right Alt (see the bottom row of the [base layer](#the-base-layer) diagram). The layout is designed around a split space bar: the right space bar opens **nav**, the left space bar (`F13`) opens **num**, and holding both space bars opens **mouse**.
+
+On a keyboard with a single space bar, hold **Space** for nav, hold **Right Alt** for num, and hold **Right Alt** and then the space bar for mouse. Right Alt still works as a normal key when tapped: a quick tap sends Right Alt, while holding it opens the num layer.
+
+All layers can also be reached with the space bar alone: hold for **nav**, tap-then-hold for **num**, and tap-tap-hold for **mouse**.
+
+The full behaviour of each key:
 
 | Action              | Right space (normal space bar) | Left space (F13) | Right Alt        |
 |---------------------|--------------------------------|------------------|------------------|
@@ -290,30 +295,31 @@ The layers are opened with the thumb keys: the left space key (`F13`), the middl
 | Double tap          | Two spaces                     | Two spaces       | n/a              |
 | Triple tap          | Three spaces                   | Three spaces     | n/a              |
 
-There are more ways to reach the mouse layer:
-
-- **Middle thumb key (F14):** hold for the **mouse** layer. Tapping it does nothing, so it never sends `F14` to your applications.
-- **Both space keys:** hold one space key for nav or num, then hold the other to switch to the **mouse** layer.
-
 The layers are only active while you hold the key (`layer-toggle`), so you never get stuck on one.
 
 ### On a keyboard with a normal space bar
 
-Most keyboards (including full-size boards and laptops) have a single space bar, which is the **right space** column in the table. You'll mainly use:
+Most keyboards (including full-size boards and laptops) have a single space bar, which is the **right space** column in the table. Use:
 
-- **Hold Space** for nav
-- **Hold Right Alt** or **tap-then-hold Space** for num
-- **Tap-tap-hold Space** for mouse
+- **Hold Space** for nav.
+- **Hold Right Alt** for num. Right Alt still works normally when tapped.
+- **Hold Right Alt, then Space** for mouse.
+- **Tap-then-hold Space** for num, or **tap-tap-hold Space** for mouse, if you prefer not to use Right Alt.
 
 ### Split space bars
 
-`F13` and `F14` are used for the extra thumb keys because **almost no physical keyboard has them**, so they never clash with keys you already use. On keyboards with a split space bar or several thumb keys, program the extra keys in the keyboard firmware (for example with QMK or VIA) to send:
+On a keyboard with a split space bar:
+
+- **Right space bar:** hold for nav.
+- **Left space bar (`F13`):** hold for num.
+- **Both space bars:** hold one, then the other, for mouse.
+
+`F13` is used for the extra thumb key because **almost no physical keyboard has it**, so it never clashes with keys you already use. Program the keys in the keyboard firmware (for example with QMK or VIA) to send:
 
 - **F13** for the left space key
-- **F14** for the middle key
 - **Space** for the right space key
 
-kanata then maps them to the functions above. On keyboards that don't send F13 or F14, those functions are simply not used and nothing breaks.
+kanata then maps them to the functions above. On keyboards that don't send F13, that function is simply not used and nothing breaks. On a single-space-bar keyboard, Space is the right space column, so no firmware change is needed.
 
 ---
 
@@ -341,9 +347,9 @@ kanata then maps them to the functions above. On keyboards that don't send F13 o
 | --    | Mute  | Vol-  | Vol+  | Play  | Ins   | BHome | BBack | Esc   | Tab   | Del   | Del   |
 |       |       |       |       |       |       |       |       |       |       |       | Shift |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| --    | --    | --    |       | XX    | held  | --    | --    | --    | --    |
-|       |       |       | Mouse |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| --    | --    | --    |       | held  | --    | --    | --    | --    |
+|       |       |       | Mouse |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+
 ```
 <!-- /text:nav -->
 
@@ -361,7 +367,7 @@ This layer is about navigation and editing, with everything a 60% board is missi
 - **PrtSc, ScrLk, Pause** on `[ ] \`.
 - The right Shift position gives **Del** with [Alpha Shift](#alpha-shift-shift-on-z-and-) behaviour.
 - `Q` and `W` are disabled to avoid accidental input.
-- Holding the **left space key (F13)** while in this layer switches to the **mouse** layer. The F14 key is disabled here.
+- Holding the **left space key (F13)** while in this layer switches to the **mouse** layer.
 
 ### Esc and live reload (`E`)
 
@@ -402,9 +408,9 @@ That makes it easy to try out changes to `kanata.kbd` without restarting kanata.
 | --    | [     | ]     | -     | =     | F11   | F12   | `     | '     | ;     | \     | /     |
 |       | Shift |       |       |       |       |       |       |       |       | Shift | Shift |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| --    | --    | --    | held  | --    |       | held  | --    | --    | --    |
-|       |       |       |       |       | Mouse |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| --    | --    | --    | held  |       | held  | --    | --    | --    |
+|       |       |       |       | Mouse |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+
 ```
 <!-- /text:num -->
 
@@ -422,7 +428,7 @@ This layer brings the number row and missing symbols to the alpha keys:
 
 ## Mouse layer
 
-**Activate:** hold the middle thumb key (F14), tap-tap-hold either space key, or hold both space keys.
+**Activate:** hold Right Alt and then Space, tap-tap-hold either space key, or hold both space keys.
 
 ![Mouse layer: numpad on the left hand, mouse movement, scroll wheel and clicks on the right hand](images/layer-mouse.svg)
 
@@ -444,9 +450,9 @@ This layer brings the number row and missing symbols to the alpha keys:
 | --    | KP.   | KP1   | KP2   | KP3   | KP/   | SlL   | SlD   | SlU   | SlR   | RClk  | --    |
 |       |       |       |       |       |       |       |       |       |       |       |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| --    | --    | --    | --    | held  | --    | --    | --    | --    | --    |
-|       |       |       |       |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| --    | --    | --    | --    | --    | --    | --    | --    | --    |
+|       |       |       |       |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+
 ```
 <!-- /text:mouse -->
 
@@ -545,31 +551,7 @@ The configuration is meant to be adapted to your own needs. Some suggestions:
 
 After each change, run kanata with `--check`, or press nav + `E` four times to reload.
 
----
-
-## Regenerating the diagrams
-
-The images in [`images/`](images) and the text version under each layer diagram are generated from `kanata.kbd`, so you don't have to redraw them by hand. Two equivalent scripts are included:
-
-- [`tools/make-images.sh`](tools/make-images.sh) — bash and POSIX `awk`, for Linux and macOS.
-- [`tools/make-images.ps1`](tools/make-images.ps1) — PowerShell, for Windows (or `pwsh` anywhere).
-
-Run either one from anywhere; paths are resolved relative to the script:
-
-```bash
-bash tools/make-images.sh
-pwsh -File tools/make-images.ps1
-```
-
-Both read `defsrc`, `deflayer`, `defalias`, `deftemplate` and `defchordsv2` from `kanata.kbd`, and produce byte-identical output:
-
-- `images/layer-base.svg`, `layer-nav.svg`, `layer-num.svg`, `layer-mouse.svg` — one per layer, light and dark theme
-- `images/chords.svg` and `images/legend.svg`
-- the ASCII text versions in this README, between the `<!-- text:<layer> -->` and `<!-- /text:<layer> -->` markers
-
-The options match: `-c`, `-o` and `-r` (bash) / `-Config`, `-OutDir` and `-Readme` (PowerShell) select a different config, output folder or README.
-
-Anything the scripts don't recognise is drawn with its raw name and a warning, and a layer with the wrong number of keys for the physical layout is reported — which catches most copy-paste slips in a new layer. Two things are deliberately part of the scripts rather than the configuration: the physical key widths of each row, and the friendly labels for key names and actions. Extend those when you add something new.
+If you add or change layers and want to regenerate the diagrams in this README, see [`tools/README.md`](tools/README.md).
 
 ---
 

@@ -47,7 +47,7 @@ read -r -d '' PROG <<'AWK' || true
 # ======================================================================
 function setup(   i, n, kv, p) {
   # Key widths in units for each defsrc row (60% layout with split thumb row).
-  NWR = split("1 1 1 1 1 1 1 1 1 1 1 1 1 2|1.5 1 1 1 1 1 1 1 1 1 1 1 1 1.5|1.75 1 1 1 1 1 1 1 1 1 1 1 2.25|2.25 1 1 1 1 1 1 1 1 1 1 2.75|1.25 1.25 1.25 2.25 1.5 2.5 1.25 1.25 1.25 1.25", WROWS, "|")
+  NWR = split("1 1 1 1 1 1 1 1 1 1 1 1 1 2|1.5 1 1 1 1 1 1 1 1 1 1 1 1 1.5|1.75 1 1 1 1 1 1 1 1 1 1 1 2.25|2.25 1 1 1 1 1 1 1 1 1 1 2.75|1.25 1.25 1.25 3 3.25 1.25 1.25 1.25 1.25", WROWS, "|")
   for (i = 1; i <= NWR; i++) WCNT[i - 1] = split(WROWS[i], tmp, " ") + 0
   for (i = 1; i <= NWR; i++) { n = split(WROWS[i], tmp, " "); for (p = 1; p <= n; p++) WID[i - 1, p - 1] = tmp[p] + 0 }
 
