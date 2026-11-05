@@ -47,9 +47,16 @@ read -r -d '' PROG <<'AWK' || true
 # ======================================================================
 function setup(   i, n, kv, p) {
   # Key widths in units for each defsrc row (60% layout with split thumb row).
-  NWR = split("1 1 1 1 1 1 1 1 1 1 1 1 1 2|1.5 1 1 1 1 1 1 1 1 1 1 1 1 1.5|1.75 1 1 1 1 1 1 1 1 1 1 1 2.25|2.25 1 1 1 1 1 1 1 1 1 1 2.75|1.25 1.25 1.25 3 3.25 1.25 1.25 1.25 1.25", WROWS, "|")
+  NWR = split("1 1 1 1 1 1 1 1 1 1 1 1 1 1 2|1.5 1 1 1 1 1 1 1 1 1 1 1 1 1.5|1.75 1 1 1 1 1 1 1 1 1 1 1 2.25|2.25 1 1 1 1 1 1 1 1 1 1 2.75|1.25 1.25 1.25 3 3.25 1.25 1.25 1.25 1.25", WROWS, "|")
   for (i = 1; i <= NWR; i++) WCNT[i - 1] = split(WROWS[i], tmp, " ") + 0
   for (i = 1; i <= NWR; i++) { n = split(WROWS[i], tmp, " "); for (p = 1; p <= n; p++) WID[i - 1, p - 1] = tmp[p] + 0 }
+  # Use the widest row for the image width (the top row has both Esc and `).
+  MAXU = 0
+  for (i = 0; i < NWR; i++) {
+    n = 0
+    for (p = 0; p < WCNT[i]; p++) n += WID[i, p]
+    if (n > MAXU) MAXU = n
+  }
 
   # defsrc rows/columns used for the chord image (rows 2-4, columns 2-11 = the letters).
   CHORD_NROWS = 3; CHORD_ROW[0] = 1; CHORD_ROW[1] = 2; CHORD_ROW[2] = 3
@@ -317,14 +324,17 @@ END {
   }
 
   # Layer images.
-  W = 15 * U - GAP + 2 * M; H = 5 * PITCH - (PITCH - KH) + 2 * M
+  W = MAXU * U - GAP + 2 * M; H = 5 * PITCH - (PITCH - KH) + 2 * M
   for (i = 0; i < NLAY; i++) {
     n = LORD[i]
     if (RN[n] != NWR) warn("Layer '" n "' has " RN[n] " rows, expected " NWR)
     s = svgstart(W, H, TITLE[n] " layer")
     for (r = 0; r < RN[n]; r++) {
       if (RC[n, r] != WCNT[r]) warn("Layer '" n "' row " (r + 1) " has " RC[n, r] " keys, expected " WCNT[r])
-      x = M; y = M + r * PITCH
+      # Right-align narrower rows: the extra Esc key on the top row sits to the left.
+      rowu = 0
+      for (c = 0; c < WCNT[r]; c++) rowu += WID[r, c]
+      x = M + (MAXU - rowu) * U; y = M + r * PITCH
       for (c = 0; c < RC[n, r]; c++) { w = WID[r, c] * U; s = s key(x, y, w - GAP, KH, CELL[n, r, c]); x += w }
     }
     writefile(OUTDIR "/layer-" n ".svg", s "</svg>")

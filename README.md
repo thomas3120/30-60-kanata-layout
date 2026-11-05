@@ -10,6 +10,7 @@ A [kanata](https://github.com/jtroo/kanata) configuration ([`kanata.kbd`](kanata
 - [How it works](#how-it-works)
 - [Installing kanata](#installing-kanata)
 - [Running the configuration](#running-the-configuration)
+- [Configuring the keyboard firmware](#configuring-the-keyboard-firmware)
 - [Reading the layer diagrams](#reading-the-layer-diagrams)
 - [The base layer](#the-base-layer)
 - [Thumb keys and layer switching](#thumb-keys-and-layer-switching)
@@ -40,9 +41,9 @@ Once your muscle memory is built for one keyboard, it works on all of them.
 
 ## How it works
 
-kanata is a software keyboard remapper. It runs in the background, intercepts key presses from *any* connected keyboard and replaces them according to the configuration file. No keyboard firmware changes are needed.
+kanata is a software keyboard remapper. It runs in the background, intercepts key presses from *any* connected keyboard and replaces them according to the configuration file. No keyboard firmware changes are needed, though a few optional tweaks make compact boards nicer to use (see [Configuring the keyboard firmware](#configuring-the-keyboard-firmware)).
 
-- The `defsrc` block describes a **60% ANSI layout** plus one extra thumb key, `F13` (see [Split space bars](#split-space-bars)).
+- The `defsrc` block describes a **60% ANSI layout**, with both `Esc` and `` ` `` at the top left so full-size and 60% keyboards can share it, plus one extra thumb key, `F13` (see [Split space bars](#split-space-bars)).
 - `process-unmapped-keys yes` makes kanata handle keys outside the 60% area too, but without remapping them. On a full-size keyboard, the arrows, F-keys, numpad and navigation block keep working as usual.
 - `delegate-to-first-layer yes` makes every transparent key (`_`) on a layer fall back to the **base layer**. For example, the special Shift keys work the same on every layer.
 
@@ -115,7 +116,19 @@ To start kanata automatically when you log in, put a shortcut to the executable 
 
 1. Unzip `linux-binaries-x64.zip` and use `kanata_linux_x64`. You can also install kanata with `cargo install kanata` or from your distribution's package manager, if available.
 2. kanata needs access to `/dev/input` and `/dev/uinput`. The usual setup is to add your user to the `input` and `uinput` groups and add a udev rule, so kanata doesn't need `sudo`. See the Linux instructions in the [kanata README](https://github.com/jtroo/kanata#readme).
-3. Optional: run kanata as a systemd user service so it starts on login.
+3. Optional: run kanata as a systemd user service so it starts automatically when you log in.
+
+   Copy [`contrib/systemd/kanata.service`](contrib/systemd/kanata.service) to `~/.config/systemd/user/`, adjust the paths inside it, then enable it:
+
+   ```bash
+   mkdir -p ~/.config/systemd/user
+   cp contrib/systemd/kanata.service ~/.config/systemd/user/
+   $EDITOR ~/.config/systemd/user/kanata.service
+   systemctl --user daemon-reload
+   systemctl --user enable --now kanata.service
+   ```
+
+   The example assumes the binary and configuration are in `~/.config/kanata/`. Change `ExecStart` if your binary is installed elsewhere (for example `/usr/bin/kanata` or `~/.cargo/bin/kanata`).
 
 ### macOS
 
@@ -167,9 +180,44 @@ After editing `kanata.kbd`, you don't need to restart kanata. Hold **Space** for
 
 ---
 
+## Configuring the keyboard firmware
+
+kanata does all the remapping in software, so the layout works without changing your keyboard firmware. If your keyboard is configurable (for example with QMK, VIA or ZMK), a few optional changes make the layout more comfortable and leave you with usable fallback layers when kanata isn't running.
+
+### Left space bar: `F13`
+
+On a keyboard with a split space bar, program the **left space key as `F13`** and the right space key as **Space**. kanata uses `F13` for the left-space num layer and Space for the nav layer. Without this change, the left space key types a normal space and the left-space function is unused.
+
+### 60% keyboards: Esc on the number row
+
+A 60% keyboard has one key to the left of `1`, where a full-size keyboard has both `Esc` (on the function row) and `` ` ``. This layout listens for both keys, so it works on either board:
+
+| Physical key | Base layer | Nav layer | Num layer |
+|--------------|------------|-----------|-----------|
+| `Esc`        | Esc        | Esc       | `` ` ``   |
+| `` ` ``      | `` ` ``    | Esc       | `` ` ``   |
+
+On the nav layer both top-left keys send Esc; on the num layer both send `` ` ``. A 60% board therefore gives you Esc on nav and `` ` `` on num from its single key, whichever code the firmware sends.
+
+On the base layer, set the first number-row key to send **Esc** if you want Esc there; leave it as `` ` `` if you prefer backtick. Either way, `` ` `` remains available on the num layer and through the `M` + `,` chord, and Esc is also on Caps Lock tap.
+
+### 40% keyboards: Backspace instead of `\`
+
+If the `\` key at the right end of the first letter row is awkward to reach, configure that key in the firmware to send **Backspace** instead. The layout's Backspace keys keep working, and the much less used `\` is still available on the num layer.
+
+### Left-over Fn keys
+
+Any Fn key left over on the keyboard can be used by the firmware to provide its own nav/num-style layers. This gives you similar navigation and number access when kanata is not active, for example before kanata is installed, after an error, or at the login screen. These firmware layers are independent of kanata and only need to send the key codes you want while they are active.
+
+### 30% keyboards
+
+Use `F13` for the left space key and Space for the right space key, and use any spare Fn key for a firmware fallback layer. If the board has no dedicated `Esc` or `` ` `` key, the two top-left keys in this layout keep both reachable through the layers.
+
+---
+
 ## Reading the layer diagrams
 
-The diagrams below show the 60% key positions, with the thumb row at the bottom. Each key shows its **tap** action in large text and its **hold** action, where it has one, in small text underneath. The colours show what kind of key it is:
+The diagrams below show the 60% key positions, with the thumb row at the bottom. Each key shows its **tap** action in large text and its **hold** action, where it has one, in small text underneath. The top row shows both `Esc` and `` ` `` and is one key wider than the rest, right-aligned so the extra Esc key sits to the left of the main block. Most 60% keyboards have a single physical key there, which the firmware can set to either (see [Configuring the keyboard firmware](#configuring-the-keyboard-firmware)). The colours show what kind of key it is:
 
 ![Legend: white keys with small blue text are tap/hold keys, blue keys are modifiers, light orange keys switch layers, dark orange keys are the thumb key held to reach the layer, dashed keys are the same as the base layer, grey keys are disabled](images/legend.svg)
 
@@ -192,17 +240,17 @@ Other abbreviations used in both versions:
 
 ## The base layer
 
-![Base layer: QWERTY with home row mods, Esc/Ctrl on Caps Lock, one-shot Shift keys and layer keys on the thumbs](images/layer-base.svg)
+![Base layer: QWERTY with Esc and backtick at the top left, home row mods, Esc/Ctrl on Caps Lock, one-shot Shift keys and layer keys on the thumbs](images/layer-base.svg)
 
 <details>
 <summary>Text version</summary>
 
 <!-- text:base -->
 ```
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| Esc   | 1     | 2     | 3     | 4     | 5     | 6     | 7     | 8     | 9     | 0     | -     | =     | Bspc  |
-|       |       |       |       |       |       |       |       |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Esc   | `     | 1     | 2     | 3     | 4     | 5     | 6     | 7     | 8     | 9     | 0     | -     | =     | Bspc  |
+|       |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
 | Tab   | Q     | W     | E     | R     | T     | Y     | U     | I     | O     | P     | [     | ]     | \     |
 |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
@@ -222,9 +270,11 @@ Other abbreviations used in both versions:
 
 The base layer is a normal QWERTY layout with these changes:
 
-### Esc on the top-left key
+### Esc and backtick at the top left
 
-The key left of `1` (normally `` ` ``) sends **Esc**, where most keyboards without a function row expect it. The backtick is still available on the nav and num layers and through the `M` + `,` chord.
+On the base layer, `Esc` sends Esc and `` ` `` sends backtick. On the nav layer both top-left keys send Esc, and on the num layer both send backtick. On a 60% board, whose single top-left key is one of these two, that means Esc on nav and `` ` `` on num regardless of the firmware setting; only the base layer differs. On the base layer of a full-size board, both keys keep their usual roles. See [Configuring the keyboard firmware](#configuring-the-keyboard-firmware) for which key code to send from a 60% board.
+
+Backtick is also available through the `M` + `,` chord.
 
 ### Caps Lock: Esc / Ctrl
 
@@ -278,13 +328,9 @@ The same behaviour is on `[` and `\` in the num layer and `Del` in the nav layer
 
 ## Thumb keys and layer switching
 
-The layers are opened with the thumb keys: the left space key (`F13`), the normal space bar and Right Alt (see the bottom row of the [base layer](#the-base-layer) diagram). The layout is designed around a split space bar: the right space bar opens **nav**, the left space bar (`F13`) opens **num**, and holding both space bars opens **mouse**.
+The layers are opened with the thumb keys: the left space key (`F13`), the normal space bar and Right Alt (see the bottom row of the [base layer](#the-base-layer) diagram). The layout is designed for a split space bar: right space opens **nav**, left space (`F13`) opens **num**, and holding both opens **mouse**. With a single space bar, Space opens **nav**, Right Alt opens **num**, and holding Right Alt and then Space opens **mouse**. Right Alt remains a normal key when tapped.
 
-On a keyboard with a single space bar, hold **Space** for nav, hold **Right Alt** for num, and hold **Right Alt** and then the space bar for mouse. Right Alt still works as a normal key when tapped: a quick tap sends Right Alt, while holding it opens the num layer.
-
-All layers can also be reached with the space bar alone: hold for **nav**, tap-then-hold for **num**, and tap-tap-hold for **mouse**.
-
-The full behaviour of each key:
+All layers can also be reached with the space bar alone: hold for **nav**, tap-then-hold for **num**, and tap-tap-hold for **mouse**. The full behaviour of each key:
 
 | Action              | Right space (normal space bar) | Left space (F13) | Right Alt        |
 |---------------------|--------------------------------|------------------|------------------|
@@ -297,29 +343,9 @@ The full behaviour of each key:
 
 The layers are only active while you hold the key (`layer-toggle`), so you never get stuck on one.
 
-### On a keyboard with a normal space bar
-
-Most keyboards (including full-size boards and laptops) have a single space bar, which is the **right space** column in the table. Use:
-
-- **Hold Space** for nav.
-- **Hold Right Alt** for num. Right Alt still works normally when tapped.
-- **Hold Right Alt, then Space** for mouse.
-- **Tap-then-hold Space** for num, or **tap-tap-hold Space** for mouse, if you prefer not to use Right Alt.
-
 ### Split space bars
 
-On a keyboard with a split space bar:
-
-- **Right space bar:** hold for nav.
-- **Left space bar (`F13`):** hold for num.
-- **Both space bars:** hold one, then the other, for mouse.
-
-`F13` is used for the extra thumb key because **almost no physical keyboard has it**, so it never clashes with keys you already use. Program the keys in the keyboard firmware (for example with QMK or VIA) to send:
-
-- **F13** for the left space key
-- **Space** for the right space key
-
-kanata then maps them to the functions above. On keyboards that don't send F13, that function is simply not used and nothing breaks. On a single-space-bar keyboard, Space is the right space column, so no firmware change is needed.
+`F13` is used for the extra thumb key because **almost no physical keyboard has it**, so it never clashes with keys you already use. On a split space bar, program the left key as `F13` and the right key as Space (see [Configuring the keyboard firmware](#configuring-the-keyboard-firmware)). kanata then maps them to the functions above. On keyboards that don't send F13, that function is simply not used and nothing breaks. A single space bar needs no firmware change.
 
 ---
 
@@ -334,10 +360,10 @@ kanata then maps them to the functions above. On keyboards that don't send F13, 
 
 <!-- text:nav -->
 ```
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| `     | F1    | F2    | F3    | F4    | F5    | F6    | F7    | F8    | F9    | F10   | F11   | F12   | Del   |
-|       |       |       |       |       |       |       |       |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| Esc   | Esc   | F1    | F2    | F3    | F4    | F5    | F6    | F7    | F8    | F9    | F10   | F11   | F12   | Del   |
+|       |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
 | --    | XX    | XX    | Esc*  | Enter | Tab   | Home  | PgDn  | PgUp  | End   | Bspc  | PrtSc | ScrLk | Pause |
 |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
@@ -361,7 +387,7 @@ This layer is about navigation and editing, with everything a 60% board is missi
 - **Plain modifiers** on `A S D F` (Win, Alt, Ctrl, Shift). Hold them together with the arrows for word jumps (`Ctrl+Left`), selections (`Shift+Down`) and so on, all from the home row.
 - **Editing keys** close to the home row: Enter (`R`, `;`), Tab (`T`, `.`), Backspace (`P`), Delete (`/`, Backspace position), Insert (`B`, `'`) and Esc (`,`).
 - **Caps Lock** on `G`.
-- **F1–F12** on the number row, and `` ` `` on the top-left key.
+- **F1–F12** on the number row, with both top-left keys sending **Esc**.
 - **Media keys** on the bottom-left: Mute, Volume down, Volume up, Play/Pause.
 - **Browser keys:** Browser Home (`N`, BHome) and Browser Back (`M`, BBack).
 - **PrtSc, ScrLk, Pause** on `[ ] \`.
@@ -395,10 +421,10 @@ That makes it easy to try out changes to `kanata.kbd` without restarting kanata.
 
 <!-- text:num -->
 ```
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| --    | F1    | F2    | F3    | F4    | F5    | F6    | F7    | F8    | F9    | F10   | F11   | F12   | --    |
-|       |       |       |       |       |       |       |       |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| `     | `     | F1    | F2    | F3    | F4    | F5    | F6    | F7    | F8    | F9    | F10   | F11   | F12   | --    |
+|       |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
 | --    | F1    | F2    | F3    | F4    | F5    | F6    | F7    | F8    | F9    | F10   | F11   | F12   | XX    |
 |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
@@ -420,6 +446,7 @@ This layer brings the number row and missing symbols to the alpha keys:
 
 - **Numbers 1–0 on the home row**, with the same [home row mods](#home-row-mods) as the letters (5 has no modifier, like `G`).
 - **F1–F12 on the top alpha row.** They're also on the number row, but **the duplication is intentional**: 40% and 30% boards have no number row, so the top alpha row is the only place they can be.
+- **F1–F12 on the number row**, with both top-left keys sending `` ` ``.
 - **Symbols on the bottom row**: `[` `]` `-` `=` `` ` `` `'` `;` `\` `/`. On a 30% board these are often missing. Combined with Shift they also give `{ } _ + ~ " : | ?`.
 - `[`, `\` and `/` have [Alpha Shift](#alpha-shift-shift-on-z-and-) behaviour, so Shift is always available on the outer bottom keys.
 - Holding the **right space key** while in this layer switches to the **mouse** layer.
@@ -437,10 +464,10 @@ This layer brings the number row and missing symbols to the alpha keys:
 
 <!-- text:mouse -->
 ```
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
-| --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    |
-|       |       |       |       |       |       |       |       |       |       |       |       |       |       |
-+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
+| --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    | --    |
+|       |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
++-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+
 | --    | KP-   | KP7   | KP8   | KP9   | KP+   | WhL   | WhD   | WhU   | WhR   | MMid  | XX    | XX    | XX    |
 |       |       |       |       |       |       |       |       |       |       |       |       |       |       |
 +-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+-------+

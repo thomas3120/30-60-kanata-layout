@@ -27,12 +27,19 @@ param(
 
 # Key widths in units for each defsrc row (60% layout with split thumb row).
 $WIDTHS = @(
-  @(1,1,1,1,1,1,1,1,1,1,1,1,1,2),
+  @(1,1,1,1,1,1,1,1,1,1,1,1,1,1,2),
   @(1.5,1,1,1,1,1,1,1,1,1,1,1,1,1.5),
   @(1.75,1,1,1,1,1,1,1,1,1,1,1,2.25),
   @(2.25,1,1,1,1,1,1,1,1,1,1,2.75),
   @(1.25,1.25,1.25,3,3.25,1.25,1.25,1.25,1.25)
 )
+# Use the widest row for the image width (the top row has both Esc and `).
+$MAXU = 0
+foreach ($row in $WIDTHS) {
+  $rowU = 0
+  foreach ($w in $row) { $rowU += $w }
+  if ($rowU -gt $MAXU) { $MAXU = $rowU }
+}
 # defsrc rows/columns used for the chord image (rows 2-4, columns 2-11 = the letters).
 $CHORD_ROWS = 1, 2, 3; $CHORD_COL0 = 1; $CHORD_COLS = 10
 $CHORD_STAGGER = 0, 0.25, 0.75
@@ -316,13 +323,16 @@ function Grid($rows) {
 foreach ($name in $LAYERS_DATA.Keys) {
   $rows = $LAYERS_DATA[$name].rows
   if ($rows.Count -ne $WIDTHS.Count) { Warn "Layer '$name' has $($rows.Count) rows, expected $($WIDTHS.Count)" }
-  $W = 15 * $U - $GAP + 2 * $M
+  $W = $MAXU * $U - $GAP + 2 * $M
   $H = 5 * $PITCH - ($PITCH - $KH) + 2 * $M
   $b = New-Object System.Text.StringBuilder
   [void]$b.Append((SvgStart $W $H $LAYERS_DATA[$name].title))
   for ($r = 0; $r -lt $rows.Count; $r++) {
     if ($rows[$r].Count -ne $WIDTHS[$r].Count) { Warn "Layer '$name' row $($r + 1) has $($rows[$r].Count) keys, expected $($WIDTHS[$r].Count)" }
-    $x = $M; $y = $M + $r * $PITCH
+    # Right-align narrower rows: the extra Esc key on the top row sits to the left.
+    $rowU = 0
+    foreach ($w in $WIDTHS[$r]) { $rowU += $w }
+    $x = $M + ($MAXU - $rowU) * $U; $y = $M + $r * $PITCH
     for ($c = 0; $c -lt $rows[$r].Count; $c++) {
       $w = $WIDTHS[$r][$c] * $U
       [void]$b.Append((Key $x $y ($w - $GAP) $KH $rows[$r][$c]))

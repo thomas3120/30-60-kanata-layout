@@ -6,7 +6,7 @@
 ;;  Note: duplicatoin of row 1 on row 2 is necessary for 30%/40% keyboards
 
 (deflayer base
-  esc       1    2    3    4    5    6    7    8    9    0         -    =    bspc
+  esc  grv  1    2    3    4    5    6    7    8    9    0         -    =    bspc
   tab       q    w    e    r    t    y    u    i    o    p         [    ]    \
   @ec       @a   @s   @d   @f   g    @h   @j   @k   @l   @;        '    ret
   @oss      @zsc x    c    v    b    n    m    ,    .    @/sc      @oss
@@ -14,7 +14,7 @@
 )
 
 (deflayer nav
-  grv       f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  del
+  esc  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  del
   _         XX   XX   @er  ret  tab  home pgdn pgup end  bspc      prnt slck brk 
   _         lmet lalt lctl lsft caps left down up   rght ret       ins  _
   _         mute vold volu pp   ins  hmpg bck  esc  tab  del       @dsc
@@ -22,7 +22,7 @@
 )
 
 (deflayer num
-  _         f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  _
+  grv  grv  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  _
   _         f1   f2   f3   f4   f5   f6   f7   f8   f9   f10       f11  f12  XX
   _         @1   @2   @3   @4   5    @6   @7   @8   @9   @0        XX   _
   _         @[sc ]    -    =    f11  f12  grv  '    ;    @\sc      @/sc
@@ -30,7 +30,7 @@
 )
 
 (deflayer mouse
-  _         _    _    _    _    _    _    _    _    _    _         _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _         kp-  kp7  kp8  kp9  kp+  @mwl @mwd @mwu @mwr mmid      XX   XX   XX
   _         @kp0 @kp4 @kp5 @kp6 kp*  @mal @mad @mau @mar mlft      @sm  _
   _         kp.  kp1  kp2  kp3  kp/  @msl @msd @msu @msr mrgt      _
@@ -249,7 +249,7 @@
 ;;  Source definition (60%)
 
 (defsrc
-  grv       1    2    3    4    5    6    7    8    9    0         -    =    bspc
+  esc  grv  1    2    3    4    5    6    7    8    9    0         -    =    bspc
   tab       q    w    e    r    t    y    u    i    o    p         [    ]    \
   caps      a    s    d    f    g    h    j    k    l    ;         '    ret
   lsft      z    x    c    v    b    n    m    ,    .    /         rsft
@@ -282,7 +282,7 @@ Additional keys missing on 30% keyboard (split):
 
 ;;  Base template for adding layers (60%)
 (deflayer template
-  _         _    _    _    _    _    _    _    _    _    _         _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _         _    _    _    _    _    _    _    _    _    _         _    _    _
   _         _    _    _    _    _    _    _    _    _    _         _    _
   _         _    _    _    _    _    _    _    _    _    _         _
