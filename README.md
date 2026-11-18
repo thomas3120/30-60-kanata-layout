@@ -2,6 +2,9 @@
 
 One layout for every keyboard.
 
+> [!NOTE]
+> [`kanata.kbd`](kanata.kbd) was written by hand, by the (human) author. This README, on the other hand, was written (quite overextensively) by ClaudeAI.
+
 A [kanata](https://github.com/jtroo/kanata) configuration ([`kanata.kbd`](kanata.kbd)) that gives you **the same layout on every keyboard and every operating system**: full size, 60%, 40% and 30% (split) keyboards, on Windows, Linux and macOS, with no changes to the file.
 
 ## Contents
